@@ -31,9 +31,9 @@ module.exports = function (app, model) {
         var formId = req.params.formId;
         var fieldId = req.params.fieldId;
         model
-            .findById(formId)
-            .then(function (form) {
-                res.json(form);
+            .findFieldByFormIdFieldId(formId, fieldId)
+            .then(function (field) {
+                res.json(field);
             });
     }
 
