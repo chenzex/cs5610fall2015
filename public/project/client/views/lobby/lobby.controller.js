@@ -17,17 +17,17 @@
                 //$rootScope.user = user;
             };
             $rootScope.user.name = $rootScope.user.username;
-            var user = $rootScope.user;
-            var msg = {
-                type: 'guestLogin',
-                user: {
-                    name: $rootScope.user.name
-                },
-                callback: fun
-            }
+            // var user = $rootScope.user;
+            // var msg = {
+            //     type: 'guestLogin',
+            //     user: {
+            //         name: $rootScope.user.name
+            //     },
+            //     callback: fun
+            // }
             // $rootScope.user = msg.user;
-            $rootScope.inClassroom = true;
-            $rootScope.socket.emit('user', msg);
+            // $rootScope.inClassroom = true;
+            // $rootScope.socket.emit('user', msg);
 			$location.path('/classroom');
 		}
     }

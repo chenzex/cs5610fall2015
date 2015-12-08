@@ -78,7 +78,7 @@
         <ul class="chat" id="chat-ul">
           <li class="online-user-li" ng-repeat="user in onlineUsers track by $index">
             {{user.name}}
-            <button class="btn btn-default btn-connect pull-right" value={{user.connId}}>
+            <button class="btn btn-default btn-connect pull-right" ng-click="chatConnect(user.connId)" value={{user.connId}}>
               <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
             </button>
           </li>

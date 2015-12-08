@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
-var cookieParser  = require('cookie-parser');
+var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
 var server = require('http').createServer(app)
 var io = require("socket.io").listen(server);
@@ -11,11 +11,11 @@ var connectionString = 'mongodb://localhost/cs5610';
 
 
 if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
-    connectionString = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
-    process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
-    process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
-    process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
-    process.env.OPENSHIFT_APP_NAME;
+  connectionString = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+  process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+  process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+  process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+  process.env.OPENSHIFT_APP_NAME;
 }
 
 var db = mongoose.connect(connectionString);
@@ -31,7 +31,7 @@ app.use(passport.session());
 
 
 app.get('/', function (req, res) {
-    res.redirect('project/client/index.html');
+  res.redirect('project/client/index.html');
 })
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
@@ -55,6 +55,16 @@ io.on('connection', function (socket) {
     io.sockets.emit('user', msg2);
     console.log('user disconnected');
   });
+  socket.on('forceDisconnect', function () {
+    socket.disconnect();
+    delete onlineUsers[socket.id];
+    var msg2 = {
+      type: 'refresh',
+      onlineUsers: onlineUsers
+    }
+    io.sockets.emit('user', msg2);
+    // console.log('user disconnected');
+  });
   socket.on('user', function (msg) {
     if (msg.type == 'guestLogin') {
       var user = msg.user;
@@ -64,23 +74,23 @@ io.on('connection', function (socket) {
         type: 'refresh',
         onlineUsers: onlineUsers
       }
-      socket.emit('user',{
+      socket.emit('user', {
         type: 'login',
         connId: socket.id,
         onlineUsers: onlineUsers
       });
       socket.broadcast.emit('user', msg2);
-    }else if(msg.type == 'request'){
+    } else if (msg.type == 'request') {
       var msg2 = msg;
       msg2.sourceId = socket.id;
       io.sockets.connected[msg.targetId].emit("user", msg2);
-    }else if(msg.type == 'group'){
+    } else if (msg.type == 'group') {
       var msg2 = {
-        type : 'group',
-        targetId : socket.id
+        type: 'group',
+        targetId: socket.id
       }
       io.sockets.connected[msg.targetId].emit("user", msg2);
-      
+
     }
   });
   socket.on('chat', function (msg) {
@@ -105,11 +115,12 @@ io.on('connection', function (socket) {
     } else if (msg.type == 'webrtc') {
       msg2 = msg;
     }
-    io.sockets.connected[msg.targetId].emit('webrtc', msg2);
+    if(io.sockets.connected[msg.targetId])
+      io.sockets.connected[msg.targetId].emit('webrtc', msg2);
   });
 });
 server.listen(port, ipaddress, function () {
-  console.log( "Listening on " + ipaddress + ", server_port " + port )
+  console.log("Listening on " + ipaddress + ", server_port " + port)
 });
 // app.listen(port, ipaddress);
 // server.listen(3000);

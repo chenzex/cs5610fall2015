@@ -6,10 +6,13 @@
 
 
     function ClassroomController($scope, $rootScope, $location) {
+        $rootScope.inClassroom = true;
         $scope.messages = [];
         if ($rootScope.socket == null)
-            // $rootScope.socket = io.connect("https://live-chenze.rhcloud.com:8443");
-            $rootScope.socket = io.connect("localhost:3000");
+            $rootScope.socket = io.connect("https://live-chenze.rhcloud.com:8443");
+            // $rootScope.socket = io.connect("localhost:3000");
+         else
+            $rootScope.socket.connect();
         
         // handle socket.io messages
         $rootScope.socket.on('chat', function (chat) {
@@ -24,6 +27,63 @@
         $rootScope.socket.on('webrtc', function (msg) {
             $scope.connect(msg);
         });
+
+        $rootScope.socket.on('user', function (msg) {
+            if (msg.type == 'refresh') {
+                if ($rootScope.user == null) return;
+                $rootScope.$apply(function () {
+                    $rootScope.onlineUsers = msg.onlineUsers;
+                    delete $rootScope.onlineUsers[$rootScope.user.connId];
+                });
+
+            } else if (msg.type == 'login') {
+                $rootScope.user.connId = msg.connId;
+                $rootScope.$apply(function () {
+                    $rootScope.onlineUsers = msg.onlineUsers;
+                    delete $rootScope.onlineUsers[$rootScope.user.connId];
+                });
+            } else if (msg.type == 'request') {
+                BootstrapDialog.show({
+                    title: 'Tuition Request',
+                    message: msg.sourceUser.name + ' is asking you to join the tuition.',
+                    buttons: [{
+                        label: 'Accept',
+                        action: function (dialog) {
+                            $rootScope.user.targetId = msg.sourceId;
+                            var msg2 = {
+                                type: 'group',
+                                sourceUser: $rootScope.user,
+                                targetUser: msg.sourceuser,
+                                targetId: msg.sourceId
+                            }
+                            $rootScope.socket.emit('user', msg2);
+                            document.getElementById('userContainer').style.display = "none";
+                            document.getElementById('chatContainer').style.display = "block";
+                            dialog.close();
+                        }
+                    }, {
+                            label: 'Cancel',
+                            action: function (dialog) {
+                                dialog.close();
+                            }
+                        }]
+                });
+            } else if (msg.type == 'group') {
+                $rootScope.user.targetId = msg.targetId;
+                document.getElementById('userContainer').style.display = "none";
+                document.getElementById('chatContainer').style.display = "block";
+            }
+        });
+
+        var msg = {
+            type: 'guestLogin',
+            user: {
+                name: $rootScope.user.name
+            },
+            callback: null
+        }
+
+        $rootScope.socket.emit('user', msg);
 
         $scope.sendMsg = function () {
             $scope.chatGenerator($scope.chatInput);
@@ -542,13 +602,13 @@
                     // _myMediaStream.stop();
                     // _myMediaStream.getVideoTracks()[0].stop();
                     _myMediaStream.getVideoTracks().forEach(function (track) {
-                                track.stop();
-                                track.enabled = false;
-                            });
+                        track.stop();
+                        track.enabled = false;
+                    });
                     _myMediaStream.getAudioTracks().forEach(function (track) {
-                                track.stop();
-                                track.enabled = false;
-                            });
+                        track.stop();
+                        track.enabled = false;
+                    });
                     var videos = document.getElementsByTagName("video");
                     for (var i = 0; i < videos.length; i++) {
                         videos[i].pause();
@@ -640,14 +700,14 @@
                     // _myMediaStream.stop();
                     // _myMediaStream.getVideoTracks()[0].stop();
                     _myMediaStream.getVideoTracks().forEach(function (track) {
-                                track.stop();
-                                track.enabled = false;
-                            });
+                        track.stop();
+                        track.enabled = false;
+                    });
                     _myMediaStream.getAudioTracks().forEach(function (track) {
-                                track.stop();
-                                track.enabled = false;
-                            });
-                    
+                        track.stop();
+                        track.enabled = false;
+                    });
+
                     var videos = document.getElementsByTagName("video");
                     for (var i = 0; i < videos.length; i++) {
                         videos[i].pause();
@@ -712,22 +772,26 @@
             $scope.videoClick = function () {
                 if (_myMediaStream == null || _myMediaStream.active == false) {
                     $scope.connect("request");
+                    BootstrapDialog.alert('Video chat request sent.');
                 } else {
                     $scope.connect("close");
                 }
             };
-            
-            $scope.exit = function(){
-                if(_myMediaStream!=null){
+
+            $scope.exit = function () {
+                if (_myMediaStream != null) {
                     $scope.connect("close");
                 }
+                // $rootScope.socket.emit('forceDisconnect');
                 $rootScope.inClassroom = false;
-                $location.path('/lobby');
+                if($rootScope.isGuest)$rootScope.user=null;
+                // $location.path('/lobby');
+                window.location.replace("/");
             };
 
-
-            $(document).on('click', '.btn-connect', function () {
-                var connId = $(this).attr('value');
+            
+            $scope.chatConnect = function (connId) {
+                // var connId = $(this).attr('value');
                 var msg2 = {
                     type: 'request',
                     targetId: connId,
@@ -735,7 +799,7 @@
                 }
                 $rootScope.socket.emit('user', msg2)
                 BootstrapDialog.alert('Connection request sent.');
-            });
+            };
 
             $('#toolMenu li > a').click(function (e) {
                 $scope.tool = new tools[this.name]();
@@ -764,9 +828,9 @@
                     $("#btn-chat").click();
                 }
             });
-            
-            
-            
+
+
+
             _myConnection = _myConnection || _createConnection(null);
         });
     }
