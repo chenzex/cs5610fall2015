@@ -1,0 +1,12 @@
+<div class="container alert alert-info accountContainer">
+  <h2 class="accountHeader">{{model.username}}</h2>
+  <input type="text" ng-model="model.firstName" class="form-control accountInput" placeholder="First Name">
+  <input type="text" ng-model="model.lastName" class="form-control accountInput"  placeholder="Last Name">
+  <input type="text" ng-model="model.email" class="form-control accountInput"  placeholder="Email">
+  <input type="text" ng-model="model.phone" class="form-control accountInput"  placeholder="Phone">
+  <input type="text" ng-model="model.school" class="form-control accountInput"  placeholder="School">
+  <input type="text" ng-model="model.major" class="form-control accountInput" placeholder="Major">
+  <input type="text" ng-model="model.grade" class="form-control accountInput"  placeholder="Grade">
+  <button  id="profileBackBtn" ng-click="model.back()" class="btn btn-warning accountBtn">back</button>
+  <button type="submit" id="profileBtn" ng-click="model.update()" class="btn btn-warning accountBtn">Submit</button>
+</div>

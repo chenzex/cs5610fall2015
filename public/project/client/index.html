@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html lang="en" ng-app="LiveTuition" ng-controller="MainController">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hands Up</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.3.0/css/bootstrap-colorpicker.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/5.2.3/css/bootstrap-slider.min.css">
+  <link rel="stylesheet" href="  https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/css/bootstrap-dialog.min.css">
+
+
+
+</head>
+
+
+<body>
+  <div ng-include ng-controller="HeaderController as model" src="'views/header/header.view.html'"></div>
+  <div ng-view id='tuitionContainer'></div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/js/bootstrap-dialog.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.0/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.0/angular-route.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+  <script src="app.js"></script>
+  <script src="service/user.service.js"></script>
+  <script src="config.js"></script>
+  <script src="MainController.js"></script>
+  <script src="views/home/home.controller.js"></script>
+  <script src="views/header/header.controller.js"></script>
+  <script src="views/register/register.controller.js"></script>
+  <script src="views/login/login.controller.js"></script>
+  <script src="views/lobby/lobby.controller.js"></script>
+  <script src="views/profile/profile.controller.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/5.2.3/bootstrap-slider.min.js"></script>
+  <script src="views/classroom/classroom.controller.js"></script>
+  <script src="js/adapter.js"></script>
+  
+  
+  
+</body>
+
+</html>
