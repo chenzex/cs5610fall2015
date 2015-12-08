@@ -108,6 +108,9 @@ io.on('connection', function (socket) {
     io.sockets.connected[msg.targetId].emit('webrtc', msg2);
   });
 });
-app.listen(port, ipaddress);
-server.listen(3000);
+server.listen(port, ipaddress, function () {
+  console.log( "Listening on " + ipaddress + ", server_port " + port )
+});
+// app.listen(port, ipaddress);
+// server.listen(3000);
 
