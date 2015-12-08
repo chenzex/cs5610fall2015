@@ -29,8 +29,8 @@
         }
         
         
-        // $rootScope.socket = io.connect("https://live-chenze.rhcloud.com:8443");
-        $rootScope.socket = io.connect("localhost:3000");
+        $rootScope.socket = io.connect("https://live-chenze.rhcloud.com:8443");
+        // $rootScope.socket = io.connect("localhost:3000");
         
         $rootScope.socket.on('user', function (msg) {
             if (msg.type == 'refresh') {
