@@ -1,6 +1,6 @@
 module.exports = function(mongoose) {
 
-    var UserSchema = mongoose.Schema({
+    var UserSchema2 = mongoose.Schema({
         id: String,
         firstName: String,
         lastName: String,
@@ -12,5 +12,5 @@ module.exports = function(mongoose) {
         major: String,
         grade: String
     },{collection: "users2"});
-    return UserSchema;
+    return UserSchema2;
 };

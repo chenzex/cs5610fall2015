@@ -36,7 +36,7 @@ app.get('/', function (req, res) {
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
-// require("./public/assignment/server/app.js")(app, db, mongoose);
+require("./public/assignment/server/app.js")(app, db, mongoose);
 require("./public/project/server/app.js")(app, db, mongoose, passport, LocalStrategy);
 
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
