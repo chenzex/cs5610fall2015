@@ -19,23 +19,23 @@ module.exports = function (db, mongoose) {
 		createNewObject: createNewObject
 	};
 	return api;
-	
-	function login(user, callback){
+
+	function login(user, callback) {
 		UserModel.findOne(user, callback);
 	}
-	
-	function register(user, callback){
+
+	function register(user, callback) {
 		UserModel.findOne(user, callback);
 	}
-	
-	function findBy_Id(id, callback){
+
+	function findBy_Id(id, callback) {
 		UserModel.findById(id, callback);
 	}
-	
-	function createNewObject(user){
+
+	function createNewObject(user) {
 		return new UserModel(user);
 	}
-	
+
 	function create(user) {
 		var deferred = q.defer();
 		UserModel.create(user, function (err, user) {
@@ -63,7 +63,7 @@ module.exports = function (db, mongoose) {
 	function findById(id) {
 		var deferred = q.defer();
 		UserModel.findOne({ id: id }).lean().exec(function (err, user) {
-			 if (err) {
+			if (err) {
                 deferred.reject(err);
             } else {
                 deferred.resolve(user);
@@ -75,7 +75,7 @@ module.exports = function (db, mongoose) {
 	function findUserByUsername(username) {
 		var deferred = q.defer();
 		UserModel.findOne({ username: username }).lean().exec(function (err, user) {
-			 if (err) {
+			if (err) {
                 deferred.reject(err);
             } else {
                 deferred.resolve(user);
@@ -98,13 +98,16 @@ module.exports = function (db, mongoose) {
 
 	function update(id, newUser) {
 		var deferred = q.defer();
-		UserModel.update({ id: id }, { $set: newUser }, function (err, user) {
+		UserModel.remove({ _id: newUser._id }, function (err, users) {
+			UserModel.create(newUser, function (err, user) {
             if (err) {
                 deferred.reject(err);
             } else {
-                deferred.resolve(newUser);
+                deferred.resolve(user);
             }
-        });
+		});
+		});
+
 		return deferred.promise;
 	}
 

@@ -23,7 +23,7 @@
                     return;
                     }
                     $rootScope.user = user;
-                    $rootScope.inClassroom = true;
+                    $rootScope.inClassroom = false;
                     $location.path('/lobby')
                 });
         }

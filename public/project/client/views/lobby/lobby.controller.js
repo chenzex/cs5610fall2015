@@ -26,6 +26,7 @@
                 callback: fun
             }
             // $rootScope.user = msg.user;
+            $rootScope.inClassroom = true;
             $rootScope.socket.emit('user', msg);
 			$location.path('/classroom');
 		}

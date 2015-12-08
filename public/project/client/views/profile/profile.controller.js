@@ -21,6 +21,8 @@
         function update() {
             var id = $rootScope.user.id;
             var user = $rootScope.user;
+            user.username = $rootScope.user.username;
+            user.password = $rootScope.user.password;
             user.firstName = model.firstName;
             user.lastName = model.lastName;
             user.email = model.email;
@@ -51,11 +53,13 @@
                                 }
                             }]
                     });
+                    $rootScope.inClassroom = false;
                 });
         }
 
         function back() {
             $location.path('/lobby');
+            $rootScope.inClassroom = false;
         }
     }
 })();
