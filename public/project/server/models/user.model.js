@@ -33,7 +33,7 @@ module.exports = function (db, mongoose) {
 	}
 
 	function createNewObject(user) {
-		return new UserModel(user);
+		return new UserModel2(user);
 	}
 
 	function create(user) {
