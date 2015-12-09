@@ -6,8 +6,9 @@
 
 
     function ClassroomController($scope, $rootScope, $location) {
+        var model = this;
         $rootScope.inClassroom = true;
-        $scope.messages = [];
+        model.messages = [];
         if ($rootScope.socket == null)
             $rootScope.socket = io.connect("https://live-chenze.rhcloud.com:8443");
             // $rootScope.socket = io.connect("localhost:3000");
@@ -17,15 +18,15 @@
         // handle socket.io messages
         $rootScope.socket.on('chat', function (chat) {
             chat.self = false;
-            $scope.chatGenerator(chat);
+            model.chatGenerator(chat);
         });
 
         $rootScope.socket.on('trace', function (trace) {
-            $scope.draw(trace);
+            model.draw(trace);
         });
 
         $rootScope.socket.on('webrtc', function (msg) {
-            $scope.connect(msg);
+            model.connect(msg);
         });
 
         $rootScope.socket.on('user', function (msg) {
@@ -85,17 +86,17 @@
 
         $rootScope.socket.emit('user', msg);
 
-        $scope.sendMsg = function () {
-            $scope.chatGenerator($scope.chatInput);
+        model.sendMsg = function () {
+            model.chatGenerator(model.chatInput);
             var msg2 = {
                 targetId: $rootScope.user.targetId,
-                content: $scope.chatInput
+                content: model.chatInput
             }
             $rootScope.socket.emit('chat', msg2);
-            $scope.chatInput = "";
+            model.chatInput = "";
         };
 
-        $scope.sendTrace = function (trace) {
+        model.sendTrace = function (trace) {
             if ($rootScope.user.targetId == null) return;
             trace.targetId = $rootScope.user.targetId;
             $rootScope.socket.emit('trace', trace);
@@ -111,16 +112,16 @@
 
             // init blackboard block
             var canvas = $('#board');
-            $scope.ctx1 = canvas[0].getContext("2d");
-            $scope.ctx1.lineJoin = $scope.ctx1.lineCap = 'round';
-            $scope.ctx2 = $('#board2')[0].getContext("2d");
-            $scope.ctx2.lineJoin = $scope.ctx2.lineCap = 'round';
-            $scope.ctx3 = $('#board3')[0].getContext("2d");
-            $scope.ctx3.lineJoin = $scope.ctx3.lineCap = 'round';
+            model.ctx1 = canvas[0].getContext("2d");
+            model.ctx1.lineJoin = model.ctx1.lineCap = 'round';
+            model.ctx2 = $('#board2')[0].getContext("2d");
+            model.ctx2.lineJoin = model.ctx2.lineCap = 'round';
+            model.ctx3 = $('#board3')[0].getContext("2d");
+            model.ctx3.lineJoin = model.ctx3.lineCap = 'round';
 
             $('#thickness').slider({
                 formatter: function (value) {
-                    $scope.ctx1.lineWidth = value;
+                    model.ctx1.lineWidth = value;
                     return 'Current value: ' + value;
                 }
             });
@@ -145,17 +146,17 @@
                     };
                     Pencil.prototype.mousemove = function (e) {
                         if (this.started) {
-                            $scope.ctx1.strokeStyle = $scope.color;
+                            model.ctx1.strokeStyle = model.color;
 
                             this.points.push({ x: e.x, y: e.y });
 
-                            $scope.ctx1.clearRect(0, 0, $scope.ctx1.canvas.width, $scope.ctx1.canvas.height);
+                            model.ctx1.clearRect(0, 0, model.ctx1.canvas.width, model.ctx1.canvas.height);
 
                             var p1 = this.points[0];
                             var p2 = this.points[1];
 
-                            $scope.ctx1.beginPath();
-                            $scope.ctx1.moveTo(p1.x, p1.y);
+                            model.ctx1.beginPath();
+                            model.ctx1.moveTo(p1.x, p1.y);
                             // console.log(this.points);
                             
                             
@@ -164,24 +165,24 @@
                                     x: p1.x + (p2.x - p1.x) / 2,
                                     y: p1.y + (p2.y - p1.y) / 2
                                 };
-                                $scope.ctx1.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+                                model.ctx1.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
                                 p1 = this.points[i];
                                 p2 = this.points[i + 1];
                             }
 
-                            $scope.ctx1.lineTo(p1.x, p1.y);
-                            $scope.ctx1.stroke();
+                            model.ctx1.lineTo(p1.x, p1.y);
+                            model.ctx1.stroke();
 
 
                             var trace = {
                                 points: this.points,
                                 type: e.type,
                                 tool: 'pencil',
-                                thickness: $scope.ctx1.lineWidth,
-                                color: $scope.ctx1.strokeStyle,
+                                thickness: model.ctx1.lineWidth,
+                                color: model.ctx1.strokeStyle,
                                 targetId: $rootScope.user.targetId
                             };
-                            $scope.sendTrace(trace);
+                            model.sendTrace(trace);
                         }
                     };
                     Pencil.prototype.mouseup = function (e) {
@@ -194,7 +195,7 @@
                                 targetId: $rootScope.user.targetId
                             };
 
-                            $scope.sendTrace(trace);
+                            model.sendTrace(trace);
                         }
                     };
                     Pencil.prototype.mouseleave = function (e) {
@@ -205,7 +206,7 @@
                             var trace = {
                                 type: 'mouseup'
                             };
-                            $scope.sendTrace(trace);
+                            model.sendTrace(trace);
                         }
                     };
                     return Pencil;
@@ -228,12 +229,12 @@
                         y = Math.min(e.y, this.y0);
                         w = Math.abs(e.x - this.x0);
                         h = Math.abs(e.y - this.y0);
-                        $scope.ctx1.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                        model.ctx1.clearRect(0, 0, canvas[0].width, canvas[0].height);
                         if (!w || !h) {
                             return;
                         }
-                        $scope.ctx1.strokeStyle = $scope.color;
-                        $scope.ctx1.strokeRect(x, y, w, h);
+                        model.ctx1.strokeStyle = model.color;
+                        model.ctx1.strokeRect(x, y, w, h);
                         var trace = {
                             x: x,
                             y: y,
@@ -241,10 +242,10 @@
                             h: h,
                             type: e.type,
                             tool: 'rect',
-                            thickness: $scope.ctx1.lineWidth,
-                            color: $scope.ctx1.strokeStyle
+                            thickness: model.ctx1.lineWidth,
+                            color: model.ctx1.strokeStyle
                         }
-                        $scope.sendTrace(trace);
+                        model.sendTrace(trace);
                     };
                     Rect.prototype.mouseup = function (e) {
                         this.started = false;
@@ -252,7 +253,7 @@
                         var trace = {
                             type: 'mouseup'
                         };
-                        $scope.sendTrace(trace);
+                        model.sendTrace(trace);
                     };
                     Rect.prototype.mouseleave = function (e) {
                     };
@@ -271,13 +272,13 @@
                         if (!this.started) {
                             return;
                         }
-                        $scope.ctx1.strokeStyle = $scope.color;
-                        $scope.ctx1.clearRect(0, 0, canvas[0].width, canvas[0].height);
-                        $scope.ctx1.beginPath();
-                        $scope.ctx1.moveTo(this.x0, this.y0);
-                        $scope.ctx1.lineTo(e.x, e.y);
-                        $scope.ctx1.stroke();
-                        $scope.ctx1.closePath();
+                        model.ctx1.strokeStyle = model.color;
+                        model.ctx1.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                        model.ctx1.beginPath();
+                        model.ctx1.moveTo(this.x0, this.y0);
+                        model.ctx1.lineTo(e.x, e.y);
+                        model.ctx1.stroke();
+                        model.ctx1.closePath();
                         var trace = {
                             x1: this.x0,
                             y1: this.y0,
@@ -285,10 +286,10 @@
                             y2: e.y,
                             type: e.type,
                             tool: 'line',
-                            thickness: $scope.ctx1.lineWidth,
-                            color: $scope.ctx1.strokeStyle
+                            thickness: model.ctx1.lineWidth,
+                            color: model.ctx1.strokeStyle
                         }
-                        $scope.sendTrace(trace);
+                        model.sendTrace(trace);
                     };
                     Line.prototype.mouseup = function (e) {
                         this.mousemove(e);
@@ -297,7 +298,7 @@
                         var trace = {
                             type: 'mouseup'
                         };
-                        $scope.sendTrace(trace);
+                        model.sendTrace(trace);
                     };
                     Line.prototype.mouseleave = function (e) {
                     };
@@ -308,26 +309,26 @@
                         this.started = false;
                     }
                     Eraser.prototype.mousedown = function (e) {
-                        $scope.ctx1.moveTo(e.x, e.y);
+                        model.ctx1.moveTo(e.x, e.y);
                         return this.started = true;
                     };
                     Eraser.prototype.mousemove = function (e) {
                         var hor_offset, ver_offset;
                         if (this.started) {
-                            hor_offset = e.x - ($scope.ctx1.lineWidth + 5) / 2;
-                            ver_offset = e.y - ($scope.ctx1.lineWidth + 5) / 2;
-                            $scope.ctx3.clearRect(hor_offset, ver_offset, $scope.ctx1.lineWidth + 5, $scope.ctx1.lineWidth + 5);
+                            hor_offset = e.x - (model.ctx1.lineWidth + 5) / 2;
+                            ver_offset = e.y - (model.ctx1.lineWidth + 5) / 2;
+                            model.ctx3.clearRect(hor_offset, ver_offset, model.ctx1.lineWidth + 5, model.ctx1.lineWidth + 5);
                             var trace = {
                                 x1: hor_offset,
                                 y1: ver_offset,
-                                x2: $scope.ctx1.lineWidth + 5,
-                                y2: $scope.ctx1.lineWidth + 5,
+                                x2: model.ctx1.lineWidth + 5,
+                                y2: model.ctx1.lineWidth + 5,
                                 type: e.type,
                                 tool: 'eraser',
-                                thickness: $scope.ctx1.lineWidth,
-                                color: $scope.ctx1.strokeStyle
+                                thickness: model.ctx1.lineWidth,
+                                color: model.ctx1.strokeStyle
                             }
-                            $scope.sendTrace(trace);
+                            model.sendTrace(trace);
                         }
                     };
                     Eraser.prototype.mouseup = function (ev) {
@@ -337,7 +338,7 @@
                             var trace = {
                                 type: 'mouseup'
                             };
-                            $scope.sendTrace(trace);
+                            model.sendTrace(trace);
                         }
                     };
                     Eraser.prototype.mouseleave = function (e) {
@@ -347,21 +348,21 @@
             }
 
             var img_update = function () {
-                $scope.ctx3.drawImage(canvas[0], 0, 0);
-                $scope.ctx1.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                model.ctx3.drawImage(canvas[0], 0, 0);
+                model.ctx1.clearRect(0, 0, canvas[0].width, canvas[0].height);
             };
             var img_update2 = function () {
-                $scope.ctx3.drawImage($('#board2')[0], 0, 0);
-                $scope.ctx2.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                model.ctx3.drawImage($('#board2')[0], 0, 0);
+                model.ctx2.clearRect(0, 0, canvas[0].width, canvas[0].height);
             };
 
-            $scope.tool = new tools['pencil']();
-            $scope.tool2 = new tools['pencil']();
-            $scope.color = '#000000';
+            model.tool = new tools['pencil']();
+            model.tool2 = new tools['pencil']();
+            model.color = '#000000';
             function ev_canvas(e) {
                 e.x = e.pageX - $(this).offset().left;
                 e.y = e.pageY - $(this).offset().top;
-                $scope.tool[e.type](e);
+                model.tool[e.type](e);
             }
 
             canvas.mousedown(ev_canvas);
@@ -371,28 +372,28 @@
 
 
 
-            $scope.clear = function () {
-                $scope.ctx3.clearRect(0, 0, $scope.ctx3.canvas.width, $scope.ctx3.canvas.height);
+            model.clear = function () {
+                model.ctx3.clearRect(0, 0, model.ctx3.canvas.width, model.ctx3.canvas.height);
                 var trace = {
                     tool: 'clear'
                 }
                 //$rootScope.socket.emit('trace', );
-                $scope.sendTrace(trace);
+                model.sendTrace(trace);
             }
 
-            $scope.draw = function (trace) {
+            model.draw = function (trace) {
                 if (trace.type == 'mouseup') {
                     img_update2();
                 }
                 else if (trace.tool == 'pencil') {
-                    $scope.ctx2.clearRect(0, 0, $scope.ctx2.canvas.width, $scope.ctx2.canvas.height);
+                    model.ctx2.clearRect(0, 0, model.ctx2.canvas.width, model.ctx2.canvas.height);
 
                     var p1 = trace.points[0];
                     var p2 = trace.points[1];
-                    $scope.ctx2.lineWidth = trace.thickness;
-                    $scope.ctx2.strokeStyle = trace.color;
-                    $scope.ctx2.beginPath();
-                    $scope.ctx2.moveTo(p1.x, p1.y);
+                    model.ctx2.lineWidth = trace.thickness;
+                    model.ctx2.strokeStyle = trace.color;
+                    model.ctx2.beginPath();
+                    model.ctx2.moveTo(p1.x, p1.y);
                     // console.log(this.points);
                             
                             
@@ -401,39 +402,39 @@
                             x: p1.x + (p2.x - p1.x) / 2,
                             y: p1.y + (p2.y - p1.y) / 2
                         };
-                        $scope.ctx2.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-                        // $scope.ctx1.lineTo(p2.x, p2.y);
+                        model.ctx2.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+                        // model.ctx1.lineTo(p2.x, p2.y);
                         // console.log(p2);
                         p1 = trace.points[i];
                         p2 = trace.points[i + 1];
                     }
 
-                    $scope.ctx2.lineTo(p1.x, p1.y);
-                    $scope.ctx2.stroke();
+                    model.ctx2.lineTo(p1.x, p1.y);
+                    model.ctx2.stroke();
 
                 } else if (trace.tool == 'rect') {
-                    $scope.ctx2.lineWidth = trace.thickness;
-                    $scope.ctx2.strokeStyle = trace.color;
-                    $scope.ctx2.clearRect(0, 0, canvas[0].width, canvas[0].height);
-                    $scope.ctx2.strokeRect(trace.x, trace.y, trace.w, trace.h);
+                    model.ctx2.lineWidth = trace.thickness;
+                    model.ctx2.strokeStyle = trace.color;
+                    model.ctx2.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                    model.ctx2.strokeRect(trace.x, trace.y, trace.w, trace.h);
                 } else if (trace.tool == 'line') {
-                    $scope.ctx2.lineWidth = trace.thickness;
-                    $scope.ctx2.strokeStyle = trace.color;
-                    $scope.ctx2.clearRect(0, 0, canvas[0].width, canvas[0].height);
-                    $scope.ctx2.beginPath();
-                    $scope.ctx2.moveTo(trace.x1, trace.y1);
-                    $scope.ctx2.lineTo(trace.x2, trace.y2);
-                    $scope.ctx2.stroke();
-                    $scope.ctx2.closePath();
+                    model.ctx2.lineWidth = trace.thickness;
+                    model.ctx2.strokeStyle = trace.color;
+                    model.ctx2.clearRect(0, 0, canvas[0].width, canvas[0].height);
+                    model.ctx2.beginPath();
+                    model.ctx2.moveTo(trace.x1, trace.y1);
+                    model.ctx2.lineTo(trace.x2, trace.y2);
+                    model.ctx2.stroke();
+                    model.ctx2.closePath();
                 } else if (trace.tool == 'eraser') {
-                    $scope.ctx2.lineWidth = trace.thickness;
-                    $scope.ctx3.clearRect(trace.x1, trace.y1, trace.x2, trace.y2);
+                    model.ctx2.lineWidth = trace.thickness;
+                    model.ctx3.clearRect(trace.x1, trace.y1, trace.x2, trace.y2);
                 } else if (trace.tool == 'clear') {
-                    $scope.ctx3.clearRect(0, 0, $scope.ctx3.canvas.width, $scope.ctx3.canvas.height);
+                    model.ctx3.clearRect(0, 0, model.ctx3.canvas.width, model.ctx3.canvas.height);
                 }
             }
 
-            $scope.chatGenerator = function (chat) {
+            model.chatGenerator = function (chat) {
                 var li = document.createElement("li");
 
                 li.className += "clearfix";
@@ -508,7 +509,7 @@
                     targetId: $rootScope.user.targetId
                 }
                 $('#btn-input').val("");
-                $scope.chatGenerator(chat);
+                model.chatGenerator(chat);
                 $rootScope.socket.emit('chat', chat);
             }
             $('#btn-chat').click(function () {
@@ -583,7 +584,7 @@
 
 
 
-            $scope.connect = function (msg) {
+            model.connect = function (msg) {
                 var msg2;
                 if (msg == 'request') {
                     msg2 = {
@@ -775,20 +776,21 @@
 
             }
 
-            $scope.videoClick = function () {
+            model.videoClick = function () {
                 if (_myMediaStream == null || _myMediaStream.active == false) {
-                    $scope.connect("request");
+                    model.connect("request");
                     BootstrapDialog.alert('Video chat request sent.');
                 } else {
-                    $scope.connect("close");
+                    model.connect("close");
                 }
             };
 
-            $scope.exit = function () {
+            model.exit = function () {
                 if (_myMediaStream != null) {
-                    $scope.connect("close");
+                    model.connect("close");
                 }
                 // $rootScope.socket.emit('forceDisconnect');
+                $('#exitClassroom').hide();
                 $rootScope.inClassroom = false;
                 if($rootScope.isGuest)$rootScope.user=null;
                 // $location.path('/lobby');
@@ -796,7 +798,7 @@
             };
 
             
-            $scope.chatConnect = function (connId) {
+            model.chatConnect = function (connId) {
                 // var connId = $(this).attr('value');
                 var msg2 = {
                     type: 'request',
@@ -808,7 +810,7 @@
             };
 
             $('#toolMenu li > a').click(function (e) {
-                $scope.tool = new tools[this.name]();
+                model.tool = new tools[this.name]();
                 if (this.name == 'pencil') {
                     $('#toolBtn').html("<span class='glyphicon glyphicon-pencil' aria-hidden='true'> <span class='caret'></span></span>");
 
@@ -825,7 +827,7 @@
             });
 
             $('#colorMenu li > a').click(function (e) {
-                $scope.color = this.name;
+                model.color = this.name;
                 document.getElementById('colorSpan').style.background = this.name;
             });
 
