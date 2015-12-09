@@ -9,6 +9,7 @@
                     templateUrl: "views/classroom/classroom.view.html",
                     controller: "ClassroomController",
                     controllerAs: "model",
+                    resolve: {loggedin: checkUser}
                 })
                 .when("/register", {
                     templateUrl: "views/register/register.view.html",
@@ -77,6 +78,18 @@
             deferred.resolve();
         });
         
+        return deferred.promise;
+    };
+    
+    var checkUser = function($q, $timeout, $http, $location, $rootScope)
+    {
+        var deferred = $q.defer();
+    
+        if($rootScope.user==null){
+            $location.url('/');
+        }else{
+            deferred.resolve();
+        }
         return deferred.promise;
     };
 })();

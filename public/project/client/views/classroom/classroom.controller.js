@@ -610,6 +610,8 @@
                         track.enabled = false;
                     });
                     _myMediaStream = null;
+                    _myConnection.close();
+                    _myConnection=null;
                     var videos = document.getElementsByTagName("video");
                     for (var i = 0; i < videos.length; i++) {
                         videos[i].pause();
@@ -709,6 +711,8 @@
                         track.enabled = false;
                     });
                     _myMediaStream = null;
+                    _myConnection.close();
+                    _myConnection=null;
 
                     var videos = document.getElementsByTagName("video");
                     for (var i = 0; i < videos.length; i++) {
