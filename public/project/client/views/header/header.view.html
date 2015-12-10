@@ -12,8 +12,8 @@
         <li><a href="#/register">Register</a></li>
         <li><a href="#/login">Login</a></li>
       </ul>
-      <ul target="_blank" class="nav navbar-nav navbar-right" ng-show="user!=null && (inClassroom == null || inClassroom == false)">
-        <li><a href="https://docs.google.com/document/d/18t_mHRPv1JcaK-JUaORx_swNsheeyhX6-m6NKA_bIdM/edit?usp=sharing">Document</a></li>
+      <ul class="nav navbar-nav navbar-right" ng-show="user!=null && (inClassroom == null || inClassroom == false)">
+        <li><a target="_blank" href="https://docs.google.com/document/d/18t_mHRPv1JcaK-JUaORx_swNsheeyhX6-m6NKA_bIdM/edit?usp=sharing">Document</a></li>
         <li><a href="#/lobby">Welcome! {{user.username}}</a></li>
         <li><a href="" ng-click="model.logout()">Logout</a></li>
       </ul>

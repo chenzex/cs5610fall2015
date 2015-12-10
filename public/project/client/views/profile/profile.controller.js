@@ -49,11 +49,14 @@
                         message: 'Information Updated',
                         buttons: [{label: 'OK',
                                 action: function (dialog) {
+                                    
                                     dialog.close();
+                                    // $location.path('/lobby');
                                 }
                             }]
                     });
                     $rootScope.inClassroom = false;
+                    $location.path('/lobby');
                 });
         }
 

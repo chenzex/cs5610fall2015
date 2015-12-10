@@ -36,19 +36,19 @@
         
 
 
-        $scope.guestLogin = function () {
+        model.guestLogin = function () {
             // var fun = function (user) {
             //     //$rootScope.user = user;
             // };
             // var msg = {
             //     type: 'guestLogin',
             //     user: {
-            //         name: $scope.guest
+            //         name: model.guest
             //     },
             //     callback: fun
             // }
             $rootScope.isGuest=true;
-            $rootScope.user = {name:$scope.guest}
+            $rootScope.user = {name:model.guest}
             // $rootScope.socket.emit('user', msg);
             // $rootScope.inClassroom = true;
             $location.path('/classroom');
