@@ -9,6 +9,10 @@ div {
         -o-user-select: none; 
 } 
 
+#icon-img{
+	display: inline;
+}
+
 .noPadding{
 	padding:0px !important;
 }
